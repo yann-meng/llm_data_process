@@ -1,0 +1,53 @@
+[project]
+name = "llm-data-process"
+version = "0.2.0"
+description = "Scalable corpus processing pipeline: Trafilatura/Unstructured -> Markdown -> markdown-it-py -> Datatrove -> JSONL/Parquet/Lakehouse"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "trafilatura>=1.10.0",
+  "unstructured[all-docs]>=0.16.0",
+  "markdown-it-py>=3.0.0",
+  "datatrove>=0.3.0",
+  "orjson>=3.10.0",
+  "pydantic>=2.8.0",
+  "typer>=0.12.0",
+  "pyyaml>=6.0.0",
+  "tqdm>=4.66.0",
+  "datasketch>=1.6.5",
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff>=0.6.0",
+  "pytest>=8.3.0",
+]
+lakehouse = [
+  "pyarrow>=17.0.0",
+  "pandas>=2.2.0",
+  "deltalake>=0.20.0",
+  "pyiceberg>=0.7.0",
+]
+quality = [
+  "transformers>=4.46.0",
+  "torch>=2.2.0",
+]
+
+[project.scripts]
+llm-data-process = "pipeline.cli:app"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
