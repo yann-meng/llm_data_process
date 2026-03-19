@@ -4,8 +4,14 @@ import hashlib
 import re
 from collections.abc import Iterable
 
+from .config import CleanConfig, DedupConfig, PiiConfig, QualityConfig
+from .markdown_parse import ParsedDoc
+from .pii import redact_pii
+from .quality import quality_gate
+
 from .config import CleanConfig, DedupConfig
 from .markdown_parse import ParsedDoc
+
 
 
 def clean_text(text: str) -> str:
@@ -52,13 +58,39 @@ def deduplicate(docs: Iterable[ParsedDoc], cfg: DedupConfig) -> Iterable[ParsedD
 
 
 def run_clean_filter_dedup(
+    docs: Iterable[ParsedDoc],
+    clean_cfg: CleanConfig,
+    dedup_cfg: DedupConfig,
+    quality_cfg: QualityConfig,
+    pii_cfg: PiiConfig,
     docs: Iterable[ParsedDoc], clean_cfg: CleanConfig, dedup_cfg: DedupConfig
+
 ) -> Iterable[ParsedDoc]:
     cleaned = []
     for doc in docs:
         new_text = clean_text(doc.text)
         if not pass_filters(new_text, clean_cfg):
             continue
+
+        if pii_cfg.enable:
+            new_text = redact_pii(
+                new_text,
+                replace_token=pii_cfg.replace_token,
+                email=pii_cfg.email,
+                phone=pii_cfg.phone,
+                id_card=pii_cfg.id_card,
+            )
+
+        if quality_cfg.enable:
+            q = quality_gate(
+                new_text,
+                min_rule_score=quality_cfg.min_rule_score,
+                max_perplexity=quality_cfg.max_perplexity,
+                ppl_backend=quality_cfg.ppl_backend,
+            )
+            if not q.passed:
+                continue
+
         cleaned.append(
             ParsedDoc(
                 doc_id=doc.doc_id,

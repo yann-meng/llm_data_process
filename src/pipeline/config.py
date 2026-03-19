@@ -13,6 +13,8 @@ class InputConfig(BaseModel):
         description="扫描输入文件的匹配模式",
     )
     ignore_patterns: list[str] = Field(default=["**/~$*", "**/.DS_Store"])
+    shard_size: int = Field(default=2_000_000, description="每个 shard 最多处理的文件数")
+
 
 
 class ExtractConfig(BaseModel):
@@ -32,13 +34,54 @@ class CleanConfig(BaseModel):
 
 
 class DedupConfig(BaseModel):
+    strategy: Literal["exact", "minhash"] = "minhash"
+    shingle_size: int = 13
+    num_perm: int = 128
+    lsh_threshold: float = 0.85
+    lsh_bands: int = 32
+
+
+class QualityConfig(BaseModel):
+    enable: bool = True
+    min_rule_score: float = 0.45
+    max_perplexity: float = 1200.0
+    ppl_backend: Literal["none", "mock", "transformers"] = "mock"
+
+
+class PiiConfig(BaseModel):
+    enable: bool = True
+    replace_token: str = "[REDACTED]"
+    email: bool = True
+    phone: bool = True
+    id_card: bool = True
+
     strategy: Literal["exact", "minhash"] = "exact"
     shingle_size: int = 13
     num_perm: int = 128
 
 
+
 class OutputConfig(BaseModel):
     output_jsonl: Path = Field(default=Path("data/output/corpus.jsonl"))
+    output_parquet_dir: Path = Field(default=Path("data/output/parquet"))
+    write_batch_size: int = 10_000
+
+
+class LakehouseConfig(BaseModel):
+    enable_delta: bool = False
+    delta_uri: Path = Path("data/lakehouse/delta/corpus")
+    enable_iceberg: bool = False
+    iceberg_catalog_uri: str = "sqlite:///data/lakehouse/iceberg/catalog.db"
+    iceberg_namespace: str = "default"
+    iceberg_table: str = "corpus"
+
+
+class DatatroveConfig(BaseModel):
+    enable_native: bool = False
+    task: Literal["extract", "dedup", "all"] = "all"
+
+
+
     write_batch_size: int = 10_000
 
 
@@ -48,4 +91,9 @@ class PipelineConfig(BaseModel):
     parse: ParseConfig = ParseConfig()
     clean: CleanConfig = CleanConfig()
     dedup: DedupConfig = DedupConfig()
+    quality: QualityConfig = QualityConfig()
+    pii: PiiConfig = PiiConfig()
+    output: OutputConfig = OutputConfig()
+    lakehouse: LakehouseConfig = LakehouseConfig()
+    datatrove: DatatroveConfig = DatatroveConfig()
     output: OutputConfig = OutputConfig()

@@ -5,5 +5,11 @@ __all__ = [
     "extract",
     "markdown_parse",
     "datatrove_flow",
+    "dedup_cross_shard",
+    "quality",
+    "pii",
+    "lakehouse",
+    "datatrove_native",
+
     "io_utils",
 ]

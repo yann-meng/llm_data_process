@@ -12,6 +12,9 @@ input:
     - "**/~$*"
     - "**/.DS_Store"
 
+  shard_size: 2000000
+
+
 extract:
   html_engine: trafilatura
   workers: 16
@@ -26,6 +29,42 @@ clean:
   language_allow: ["zh", "en"]
 
 dedup:
+
+  strategy: minhash
+  shingle_size: 13
+  num_perm: 128
+  lsh_threshold: 0.85
+  lsh_bands: 32
+
+quality:
+  enable: true
+  min_rule_score: 0.45
+  max_perplexity: 1200.0
+  ppl_backend: mock
+
+pii:
+  enable: true
+  replace_token: "[REDACTED]"
+  email: true
+  phone: true
+  id_card: true
+
+output:
+  output_jsonl: data/output/corpus.jsonl
+  output_parquet_dir: data/output/parquet
+  write_batch_size: 10000
+
+lakehouse:
+  enable_delta: false
+  delta_uri: data/lakehouse/delta/corpus
+  enable_iceberg: false
+  iceberg_catalog_uri: "sqlite:///data/lakehouse/iceberg/catalog.db"
+  iceberg_namespace: default
+  iceberg_table: corpus
+
+datatrove:
+  enable_native: false
+  task: all
   strategy: exact
   shingle_size: 13
   num_perm: 128
@@ -33,3 +72,4 @@ dedup:
 output:
   output_jsonl: data/output/corpus.jsonl
   write_batch_size: 10000
+
