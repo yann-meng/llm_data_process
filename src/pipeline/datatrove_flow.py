@@ -9,11 +9,6 @@ from .markdown_parse import ParsedDoc
 from .pii import redact_pii
 from .quality import quality_gate
 
-from .config import CleanConfig, DedupConfig
-from .markdown_parse import ParsedDoc
-
-
-
 def clean_text(text: str) -> str:
     text = text.replace("\x00", " ")
     text = re.sub(r"\n{3,}", "\n\n", text)
@@ -63,8 +58,6 @@ def run_clean_filter_dedup(
     dedup_cfg: DedupConfig,
     quality_cfg: QualityConfig,
     pii_cfg: PiiConfig,
-    docs: Iterable[ParsedDoc], clean_cfg: CleanConfig, dedup_cfg: DedupConfig
-
 ) -> Iterable[ParsedDoc]:
     cleaned = []
     for doc in docs:

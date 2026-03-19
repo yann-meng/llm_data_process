@@ -3,8 +3,6 @@ name = "llm-data-process"
 
 version = "0.2.0"
 description = "Scalable corpus processing pipeline: Trafilatura/Unstructured -> Markdown -> markdown-it-py -> Datatrove -> JSONL/Parquet/Lakehouse"
-version = "0.1.0"
-description = "Scalable corpus processing pipeline: Trafilatura/Unstructured -> Markdown -> markdown-it-py -> Datatrove -> JSONL"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
