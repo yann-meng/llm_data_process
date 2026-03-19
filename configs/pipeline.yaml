@@ -1,0 +1,35 @@
+input:
+  input_root: data/raw
+  glob_patterns:
+    - "**/*.html"
+    - "**/*.htm"
+    - "**/*.md"
+    - "**/*.txt"
+    - "**/*.pdf"
+    - "**/*.docx"
+    - "**/*.pptx"
+  ignore_patterns:
+    - "**/~$*"
+    - "**/.DS_Store"
+
+extract:
+  html_engine: trafilatura
+  workers: 16
+  max_chars_per_doc: 4000000
+
+parse:
+  keep_token_types: ["paragraph_open", "heading_open", "fence", "inline"]
+
+clean:
+  min_chars: 200
+  max_ratio_symbol: 0.35
+  language_allow: ["zh", "en"]
+
+dedup:
+  strategy: exact
+  shingle_size: 13
+  num_perm: 128
+
+output:
+  output_jsonl: data/output/corpus.jsonl
+  write_batch_size: 10000
