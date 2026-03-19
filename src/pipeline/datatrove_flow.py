@@ -9,6 +9,10 @@ from .markdown_parse import ParsedDoc
 from .pii import redact_pii
 from .quality import quality_gate
 
+from .config import CleanConfig, DedupConfig
+from .markdown_parse import ParsedDoc
+
+
 
 def clean_text(text: str) -> str:
     text = text.replace("\x00", " ")
@@ -38,6 +42,11 @@ def _exact_hash(text: str) -> str:
 
 
 def deduplicate(docs: Iterable[ParsedDoc], cfg: DedupConfig) -> Iterable[ParsedDoc]:
+    """
+    Framework-level dedup stage.
+    - exact: uses SHA1 fingerprint, memory-efficient and deterministic.
+    - minhash: placeholder hook for swapping to Datatrove's large-scale fuzzy dedup stage.
+    """
     seen: set[str] = set()
 
     for doc in docs:
@@ -54,6 +63,8 @@ def run_clean_filter_dedup(
     dedup_cfg: DedupConfig,
     quality_cfg: QualityConfig,
     pii_cfg: PiiConfig,
+    docs: Iterable[ParsedDoc], clean_cfg: CleanConfig, dedup_cfg: DedupConfig
+
 ) -> Iterable[ParsedDoc]:
     cleaned = []
     for doc in docs:

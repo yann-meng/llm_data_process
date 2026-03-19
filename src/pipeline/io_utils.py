@@ -19,6 +19,7 @@ def iter_input_files(root: Path, patterns: list[str], ignore_patterns: list[str]
                 yield path
 
 
+
 def to_record(item: ParsedDoc) -> dict:
     return {
         "id": item.doc_id,
@@ -29,9 +30,20 @@ def to_record(item: ParsedDoc) -> dict:
     }
 
 
+
 def write_jsonl(records: Iterable[ParsedDoc], output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("wb") as f:
         for item in records:
             f.write(orjson.dumps(to_record(item)))
+
+            payload = {
+                "id": item.doc_id,
+                "source": item.source_path,
+                "text": item.text,
+                "headings": item.headings,
+                "code_blocks": item.code_blocks,
+            }
+            f.write(orjson.dumps(payload))
+
             f.write(b"\n")

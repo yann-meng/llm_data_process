@@ -11,7 +11,9 @@ input:
   ignore_patterns:
     - "**/~$*"
     - "**/.DS_Store"
+
   shard_size: 2000000
+
 
 extract:
   html_engine: trafilatura
@@ -27,6 +29,7 @@ clean:
   language_allow: ["zh", "en"]
 
 dedup:
+
   strategy: minhash
   shingle_size: 13
   num_perm: 128
@@ -62,3 +65,11 @@ lakehouse:
 datatrove:
   enable_native: false
   task: all
+  strategy: exact
+  shingle_size: 13
+  num_perm: 128
+
+output:
+  output_jsonl: data/output/corpus.jsonl
+  write_batch_size: 10000
+

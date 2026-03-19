@@ -1,7 +1,10 @@
 [project]
 name = "llm-data-process"
+
 version = "0.2.0"
 description = "Scalable corpus processing pipeline: Trafilatura/Unstructured -> Markdown -> markdown-it-py -> Datatrove -> JSONL/Parquet/Lakehouse"
+version = "0.1.0"
+description = "Scalable corpus processing pipeline: Trafilatura/Unstructured -> Markdown -> markdown-it-py -> Datatrove -> JSONL"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -15,6 +18,7 @@ dependencies = [
   "pyyaml>=6.0.0",
   "tqdm>=4.66.0",
   "datasketch>=1.6.5",
+
 ]
 
 [project.optional-dependencies]
@@ -22,6 +26,7 @@ dev = [
   "ruff>=0.6.0",
   "pytest>=8.3.0",
 ]
+
 lakehouse = [
   "pyarrow>=17.0.0",
   "pandas>=2.2.0",
@@ -32,6 +37,7 @@ quality = [
   "transformers>=4.46.0",
   "torch>=2.2.0",
 ]
+
 
 [project.scripts]
 llm-data-process = "pipeline.cli:app"

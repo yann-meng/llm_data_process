@@ -16,6 +16,7 @@ class InputConfig(BaseModel):
     shard_size: int = Field(default=2_000_000, description="每个 shard 最多处理的文件数")
 
 
+
 class ExtractConfig(BaseModel):
     html_engine: Literal["trafilatura", "unstructured"] = "trafilatura"
     workers: int = 16
@@ -54,6 +55,11 @@ class PiiConfig(BaseModel):
     phone: bool = True
     id_card: bool = True
 
+    strategy: Literal["exact", "minhash"] = "exact"
+    shingle_size: int = 13
+    num_perm: int = 128
+
+
 
 class OutputConfig(BaseModel):
     output_jsonl: Path = Field(default=Path("data/output/corpus.jsonl"))
@@ -75,6 +81,10 @@ class DatatroveConfig(BaseModel):
     task: Literal["extract", "dedup", "all"] = "all"
 
 
+
+    write_batch_size: int = 10_000
+
+
 class PipelineConfig(BaseModel):
     input: InputConfig
     extract: ExtractConfig = ExtractConfig()
@@ -86,3 +96,4 @@ class PipelineConfig(BaseModel):
     output: OutputConfig = OutputConfig()
     lakehouse: LakehouseConfig = LakehouseConfig()
     datatrove: DatatroveConfig = DatatroveConfig()
+    output: OutputConfig = OutputConfig()
