@@ -69,7 +69,3 @@ datatrove:
   shingle_size: 13
   num_perm: 128
 
-output:
-  output_jsonl: data/output/corpus.jsonl
-  write_batch_size: 10000
-
