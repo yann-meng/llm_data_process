@@ -13,7 +13,7 @@
 8. JSONL + Parquet 输出
 9. Delta / Iceberg 数据湖写入
 
-## 1) 工程结构
+## 1 工程结构
 # LLM Data Process（Trafilatura / Unstructured -> Markdown -> markdown-it-py -> Datatrove -> JSONL）
 
 这是一个面向**超大规模语料（10B 量级）**的数据工程框架，重点覆盖你给出的处理链路：
@@ -26,8 +26,6 @@
 
 > 适配数据类型：Markdown、PDF、HTML、PPT、Word、TXT 等；中英文混合（中文占比高、英文较少）以及代码文本。
 
-
-## 1. 工程结构
 
 ```text
 .
@@ -57,7 +55,7 @@
 ```
 
 
-## 2) 核心能力映射
+## 2 核心能力映射
 
 ### A. Datatrove 原生 pipeline/executor 接入
 - 文件：`src/pipeline/datatrove_native.py`
@@ -85,9 +83,9 @@
 - `write_delta`：写 Delta Lake
 - `write_iceberg`：写 Iceberg catalog/table
 
----
 
-## 3) 配置说明（`configs/pipeline.yaml`）
+
+## 3 配置说明（`configs/pipeline.yaml`）
 
 新增关键配置：
 - `input.shard_size`：shard 切分大小
@@ -98,36 +96,6 @@
 - `lakehouse.*`：Delta/Iceberg 写入参数
 - `datatrove.enable_native`：Datatrove 原生执行开关
 
----
-
-## 4) 运行
-## 2. 处理流程映射
-
-### Stage A: 多格式抽取 -> Markdown
-- `extract.py`
-  - HTML/HTM 优先用 `trafilatura` 提取为 Markdown。
-  - 其它格式（pdf/docx/pptx/md/txt）通过 `unstructured.partition.auto` 统一提取。
-
-### Stage B: Markdown 结构解析
-- `markdown_parse.py`
-  - 用 `markdown-it-py` 把 Markdown 解析成 token。
-  - 抽取结构信息：标题、正文、代码块数量。
-
-### Stage C: 清洗 + 过滤 + 去重
-- `datatrove_flow.py`
-  - `clean_text`：去 NUL、合并空行、压缩空白。
-  - `pass_filters`：最小长度、符号比例、中英语言门控。
-  - `deduplicate`：默认 exact hash（SHA1）。
-  - 预留 `minhash` 策略接口，后续可替换为 Datatrove 的大规模模糊去重。
-
-### Stage D: JSONL 落盘
-- `io_utils.py`
-  - 按行写出 JSONL，字段包含：
-    - `id`
-    - `source`
-    - `text`
-    - `headings`
-    - `code_blocks`
 
 
 ## 3. 安装与运行
@@ -162,15 +130,6 @@ pip install -e .[lakehouse]
 python -m pipeline.cli -c configs/pipeline.yaml
 ```
 
-
-
-## 5) 10B 级落地建议
-
-1. 单 shard 先做抽取/清洗/质量/PII/局部去重，产出中间 parquet。
-2. 统一做跨 shard MinHash + LSH，全局去重后再写最终 JSONL。
-3. 下游训练与检索尽量直接消费 parquet/delta/iceberg，减少 JSON 反序列化开销。
-4. 困惑度建议切换为真实 LM（例如小模型批量打分），当前 `mock` 仅作框架位。
-5. 建议将 `runner.py` 调度层迁移到 Ray/Spark，以便稳定承载 10B 级任务。
 
 ## 4. 10B 规模建议（落地重点）
 
