@@ -13,7 +13,7 @@
 8. JSONL + Parquet 输出
 9. Delta / Iceberg 数据湖写入
 
-## 1 工程结构
+## 1. 工程结构
 # LLM Data Process（Trafilatura / Unstructured -> Markdown -> markdown-it-py -> Datatrove -> JSONL）
 
 这是一个面向**超大规模语料（10B 量级）**的数据工程框架，重点覆盖你给出的处理链路：
@@ -55,7 +55,7 @@
 ```
 
 
-## 2 核心能力映射
+## 2. 核心能力映射
 
 ### A. Datatrove 原生 pipeline/executor 接入
 - 文件：`src/pipeline/datatrove_native.py`
@@ -85,7 +85,7 @@
 
 
 
-## 3 配置说明（`configs/pipeline.yaml`）
+## 3. 配置说明（`configs/pipeline.yaml`）
 
 新增关键配置：
 - `input.shard_size`：shard 切分大小
@@ -98,7 +98,7 @@
 
 
 
-## 3. 安装与运行
+## 4. 安装与运行
 
 ### 安装
 
@@ -131,7 +131,7 @@ python -m pipeline.cli -c configs/pipeline.yaml
 ```
 
 
-## 4. 10B 规模建议（落地重点）
+## 5. 10B 规模建议（落地重点）
 
 1. **分片执行（强烈建议）**
    - 按目录/时间/来源做 shard（例如每 shard 5M~20M 文档）。
