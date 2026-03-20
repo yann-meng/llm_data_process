@@ -159,7 +159,7 @@ pip install -e .[lakehouse]
 
 ./scripts/run_pipeline.sh
 # 或
-python -m pipeline.cli run -c configs/pipeline.yaml
+python -m pipeline.cli -c configs/pipeline.yaml
 ```
 
 
@@ -193,15 +193,5 @@ python -m pipeline.cli run -c configs/pipeline.yaml
 5. **可观测性**
    - 为每个 stage 增加指标：输入数、通过率、平均长度、去重率。
    - 建议接 Prometheus + Grafana 或至少 CSV 指标汇总。
-
----
-
-## 5. 下一步可扩展项
-
-- [ ] 接入 Datatrove 原生 pipeline/executor（本框架已留出 `datatrove_flow.py` 入口）。
-- [ ] 增加 MinHash + LSH 的跨 shard 去重任务。
-- [ ] 增加质量打分（困惑度/规则分）并做阈值裁剪。
-- [ ] 增加 PII 清洗（邮箱/电话/证件号等）。
-- [ ] 增加 parquet 输出与 Delta/Iceberg 数据湖写入。
 
 
